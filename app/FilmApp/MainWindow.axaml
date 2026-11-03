@@ -1,0 +1,77 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:FilmApp"
+        x:Class="FilmApp.MainWindow"
+        Title="Рекомендации фильмов" Width="1050" Height="680"
+        MinWidth="800" MinHeight="520">
+    <Grid Margin="12" RowDefinitions="Auto,*,Auto" ColumnDefinitions="340,*">
+
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
+            <TextBlock Text="Пользователь:" VerticalAlignment="Center"/>
+            <TextBox x:Name="UserIdBox" Text="1" Width="80"/>
+            <TextBlock x:Name="StatusText" Foreground="Gray" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Левая панель: поиск фильмов -->
+        <DockPanel Grid.Row="1" Grid.Column="0" Margin="0,0,10,0">
+            <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
+                <TextBlock Text="Поиск фильма" FontWeight="Bold"/>
+                <TextBox x:Name="SearchBox" Watermark="например: Toy Story"/>
+                <Button Content="Найти" HorizontalAlignment="Stretch" Click="OnSearch"/>
+            </StackPanel>
+            <ListBox x:Name="MoviesList">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="local:MovieItem">
+                        <StackPanel Margin="0,3">
+                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding Genres}" FontSize="11" Foreground="Gray" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
+        <!-- Правая панель: рекомендации -->
+        <DockPanel Grid.Row="1" Grid.Column="1">
+            <TextBlock x:Name="RecsHeader" DockPanel.Dock="Top" Text="Выберите действие ниже"
+                       FontWeight="Bold" Margin="0,0,0,6"/>
+            <ListBox x:Name="RecsList">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="local:MovieItem">
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,3">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Genres}" FontSize="11" Foreground="Gray" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="1" Text="{Binding ScoreText}" Foreground="SteelBlue"
+                                       VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+
+        <!-- Нижняя панель: действия и оценка -->
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Spacing="8" Margin="0,10,0,0">
+            <WrapPanel ItemWidth="200" ItemHeight="34">
+                <Button Content="Топ-10 популярных" Margin="0,0,8,8" Click="OnPopular"/>
+                <Button Content="Похожие (SVD)" Margin="0,0,8,8" Click="OnSimilarSvd"/>
+                <Button Content="Похожие (контент)" Margin="0,0,8,8" Click="OnSimilarContent"/>
+                <Button Content="Рекомендации по моим оценкам" Margin="0,0,8,8" Click="OnMyRecs"/>
+                <Button Content="Мои оценки" Margin="0,0,8,8" Click="OnMyRatings"/>
+                <Button Content="Справка" Margin="0,0,8,8" Click="OnHelp"/>
+            </WrapPanel>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="Оценить выбранный фильм:" VerticalAlignment="Center"/>
+                <ComboBox x:Name="RatingBox" Width="90" SelectedIndex="4">
+                    <ComboBoxItem>1</ComboBoxItem>
+                    <ComboBoxItem>2</ComboBoxItem>
+                    <ComboBoxItem>3</ComboBoxItem>
+                    <ComboBoxItem>4</ComboBoxItem>
+                    <ComboBoxItem>5</ComboBoxItem>
+                </ComboBox>
+                <Button Content="Сохранить оценку" Click="OnSaveRating"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

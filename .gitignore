@@ -1,0 +1,24 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+api.log
+app.log
+
+# Данные и модель (большие файлы)
+api/ratings.db
+api/*.pkl
+
+# .NET / Avalonia
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# macOS / IDE
+.DS_Store
+.idea/
+.vscode/
