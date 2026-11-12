@@ -2,76 +2,310 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:FilmApp"
         x:Class="FilmApp.MainWindow"
-        Title="Рекомендации фильмов" Width="1050" Height="680"
-        MinWidth="800" MinHeight="520">
-    <Grid Margin="12" RowDefinitions="Auto,*,Auto" ColumnDefinitions="340,*">
+        Title="Кинорекомендации"
+        Width="1360" Height="880"
+        MinWidth="1060" MinHeight="680"
+        WindowStartupLocation="CenterScreen"
+        Background="#0E1015">
 
-        <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
-            <TextBlock Text="Пользователь:" VerticalAlignment="Center"/>
-            <TextBox x:Name="UserIdBox" Text="1" Width="80"/>
-            <TextBlock x:Name="StatusText" Foreground="Gray" VerticalAlignment="Center"/>
-        </StackPanel>
+    <Window.Resources>
+        <SolidColorBrush x:Key="Panel" Color="#151821"/>
+        <SolidColorBrush x:Key="Card" Color="#171B25"/>
+        <SolidColorBrush x:Key="Stroke" Color="#232837"/>
+        <SolidColorBrush x:Key="Text" Color="#EDF0F6"/>
+        <SolidColorBrush x:Key="Muted" Color="#8B93A7"/>
+        <SolidColorBrush x:Key="Accent" Color="#E5B454"/>
+    </Window.Resources>
 
-        <!-- Левая панель: поиск фильмов -->
-        <DockPanel Grid.Row="1" Grid.Column="0" Margin="0,0,10,0">
-            <StackPanel DockPanel.Dock="Top" Spacing="6" Margin="0,0,0,8">
-                <TextBlock Text="Поиск фильма" FontWeight="Bold"/>
-                <TextBox x:Name="SearchBox" Watermark="например: Toy Story"/>
-                <Button Content="Найти" HorizontalAlignment="Stretch" Click="OnSearch"/>
-            </StackPanel>
-            <ListBox x:Name="MoviesList">
-                <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="local:MovieItem">
-                        <StackPanel Margin="0,3">
-                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/>
-                            <TextBlock Text="{Binding Genres}" FontSize="11" Foreground="Gray" TextWrapping="Wrap"/>
+    <Window.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource Text}"/>
+        </Style>
+
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#1C212D"/>
+            <Setter Property="Foreground" Value="#D7DCE8"/>
+            <Setter Property="BorderBrush" Value="#2A3143"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#252C3B"/>
+            <Setter Property="BorderBrush" Value="#3A4358"/>
+        </Style>
+        <Style Selector="Button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#2E3648"/>
+        </Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="{StaticResource Accent}"/>
+            <Setter Property="Foreground" Value="#151821"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#F1C66D"/>
+        </Style>
+        <Style Selector="Button.primary:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#CFA047"/>
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#161A23"/>
+            <Setter Property="Foreground" Value="{StaticResource Text}"/>
+            <Setter Property="BorderBrush" Value="#262C3B"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="SelectionBrush" Value="{StaticResource Accent}"/>
+        </Style>
+        <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="#333B4F"/>
+        </Style>
+        <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="{StaticResource Accent}"/>
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="#1C212D"/>
+            <Setter Property="Foreground" Value="{StaticResource Text}"/>
+            <Setter Property="BorderBrush" Value="#2A3143"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="MinHeight" Value="34"/>
+            <Setter Property="Padding" Value="10,4"/>
+        </Style>
+
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="ListBox.movies ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Background" Value="{StaticResource Card}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="ListBox.movies ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#1F2432"/>
+        </Style>
+        <Style Selector="ListBox.movies ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="#262E42"/>
+        </Style>
+        <Style Selector="ListBox.movies ListBoxItem:selected:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#2C3549"/>
+        </Style>
+
+        <Style Selector="ProgressBar">
+            <Setter Property="Foreground" Value="{StaticResource Accent}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="MinHeight" Value="2"/>
+            <Setter Property="Height" Value="2"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+        <Border Grid.Row="0" Padding="24,16" Background="#11141B"
+                BorderBrush="{StaticResource Stroke}" BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Border Width="40" Height="40" CornerRadius="13" Background="{StaticResource Accent}">
+                        <Path Data="M 0,0 L 0,16 L 13,8 Z" Fill="#14161B" Stretch="Uniform"
+                              Width="12" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center" Spacing="1">
+                        <TextBlock Text="Кинорекомендации" FontSize="17" FontWeight="Bold"/>
+                        <TextBlock Text="MovieLens · SVD + контент" FontSize="11" Foreground="{StaticResource Muted}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <TextBlock Text="Профиль" FontSize="12" Foreground="{StaticResource Muted}" VerticalAlignment="Center"/>
+                    <TextBox x:Name="UserIdBox" Text="1" Width="76" HorizontalContentAlignment="Center"/>
+                    <Border Background="#1A1F2B" CornerRadius="9" Padding="10,6"
+                            BorderBrush="{StaticResource Stroke}" BorderThickness="1">
+                        <TextBlock Text="127.0.0.1:8010" FontSize="11" Foreground="{StaticResource Muted}"/>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <ProgressBar x:Name="BusyBar" Grid.Row="1" IsIndeterminate="True" IsVisible="False"/>
+
+        <Grid Grid.Row="2" Margin="20,16,20,0" ColumnDefinitions="440,*">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Grid.ColumnSpan="2" ColumnDefinitions="Auto,*" Margin="0,0,0,16">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBox x:Name="SearchBox" Watermark="Поиск фильма: Toy Story, Matrix…" Width="300"/>
+                    <Button Content="Найти" Classes="primary" Click="OnSearch"/>
+                </StackPanel>
+                <WrapPanel Grid.Column="1" HorizontalAlignment="Right" Margin="16,0,0,0">
+                    <Button Content="Топ-10" Margin="0,0,8,0" Click="OnPopular"/>
+                    <Button Content="Похожие SVD" Margin="0,0,8,0" Click="OnSimilarSvd"/>
+                    <Button Content="Похожие контент" Margin="0,0,8,0" Click="OnSimilarContent"/>
+                    <Button Content="Мои рекомендации" Margin="0,0,8,0" Click="OnMyRecs"/>
+                    <Button Content="Мои оценки" Margin="0,0,8,0" Click="OnMyRatings"/>
+                    <Button Content="Справка" Click="OnHelp"/>
+                </WrapPanel>
+            </Grid>
+
+            <Border Grid.Row="1" Grid.Column="0" Background="{StaticResource Panel}" CornerRadius="16"
+                    Padding="14" Margin="0,0,16,0">
+                <Grid RowDefinitions="Auto,*">
+                    <Grid ColumnDefinitions="*,Auto" Margin="4,2,4,12">
+                        <StackPanel Spacing="2">
+                            <TextBlock x:Name="ResultsHeader" Text="Результаты" FontSize="13" FontWeight="SemiBold"/>
+                            <TextBlock Text="Выберите фильм, чтобы увидеть описание"
+                                       FontSize="11" Foreground="{StaticResource Muted}"/>
                         </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </DockPanel>
+                        <Border Grid.Column="1" Background="#202634" CornerRadius="9" Padding="9,4"
+                                VerticalAlignment="Center">
+                            <TextBlock x:Name="ResultsCount" Text="0" FontSize="11" FontWeight="SemiBold"
+                                       Foreground="{StaticResource Accent}"/>
+                        </Border>
+                    </Grid>
 
-        <!-- Правая панель: рекомендации -->
-        <DockPanel Grid.Row="1" Grid.Column="1">
-            <TextBlock x:Name="RecsHeader" DockPanel.Dock="Top" Text="Выберите действие ниже"
-                       FontWeight="Bold" Margin="0,0,0,6"/>
-            <ListBox x:Name="RecsList">
-                <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="local:MovieItem">
-                        <Grid ColumnDefinitions="*,Auto" Margin="0,3">
-                            <StackPanel>
-                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/>
-                                <TextBlock Text="{Binding Genres}" FontSize="11" Foreground="Gray" TextWrapping="Wrap"/>
+                    <ListBox x:Name="ResultsList" Grid.Row="1" Classes="movies">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="local:MovieItem">
+                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="10">
+                                    <Border Width="50" Height="74" CornerRadius="9" ClipToBounds="True">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                                <GradientStop Color="#2A3550" Offset="0"/>
+                                                <GradientStop Color="#171B25" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Grid>
+                                            <TextBlock Text="{Binding Initial}" FontSize="20" FontWeight="Bold"
+                                                       Foreground="#4A5670"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Image local:PosterLoader.Url="{Binding PosterUrl}" Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="12,0,10,0" VerticalAlignment="Center" Spacing="4">
+                                        <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="SemiBold"
+                                                   TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding GenresText}" FontSize="11"
+                                                   Foreground="{StaticResource Muted}"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding MetaText}" FontSize="11" Foreground="#6E7686"/>
+                                    </StackPanel>
+                                    <Border Grid.Column="2" Background="#202634" CornerRadius="9" Padding="9,5"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding ScoreText}" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource Accent}"/>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="1" Grid.Column="1" Background="{StaticResource Panel}" CornerRadius="16" Padding="22">
+                <Grid RowDefinitions="Auto,*">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Border Width="232" Height="336" CornerRadius="14" ClipToBounds="True"
+                                BoxShadow="0 14 34 -10 #99000000">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                    <GradientStop Color="#2C3855" Offset="0"/>
+                                    <GradientStop Color="#161A23" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Grid>
+                                <TextBlock x:Name="PosterFallback" Text="?" FontSize="46" FontWeight="Bold"
+                                           Foreground="#3E4A63"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Image x:Name="DetailPoster" Stretch="UniformToFill"/>
+                            </Grid>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" Margin="24,2,0,0" Spacing="12">
+                            <TextBlock x:Name="DetailTitle" Text="Ничего не выбрано" FontSize="26" FontWeight="Bold"
+                                       TextWrapping="Wrap"/>
+                            <TextBlock x:Name="DetailSubtitle" Text="Найдите фильм или откройте подборку"
+                                       FontSize="12.5" Foreground="{StaticResource Muted}"/>
+
+                            <ItemsControl x:Name="GenresList">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="x:String">
+                                        <Border Background="#212838" CornerRadius="20" Padding="11,4" Margin="0,0,6,6">
+                                            <TextBlock Text="{Binding}" FontSize="11" Foreground="#C3CAD9"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <Border Background="#1A1F2B" CornerRadius="12" Padding="16,12" Margin="0,4,0,0"
+                                    BorderBrush="{StaticResource Stroke}" BorderThickness="1">
+                                <Grid ColumnDefinitions="*,*,*">
+                                    <StackPanel Spacing="2">
+                                        <TextBlock Text="Средняя оценка" FontSize="11" Foreground="{StaticResource Muted}"/>
+                                        <TextBlock x:Name="DetailAvg" Text="—" FontSize="19" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Spacing="2">
+                                        <TextBlock Text="Голосов" FontSize="11" Foreground="{StaticResource Muted}"/>
+                                        <TextBlock x:Name="DetailVotes" Text="—" FontSize="19" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Spacing="2">
+                                        <TextBlock Text="Балл модели" FontSize="11" Foreground="{StaticResource Muted}"/>
+                                        <TextBlock x:Name="DetailScore" Text="—" FontSize="19" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource Accent}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,2,0,0">
+                                <TextBlock Text="Моя оценка" VerticalAlignment="Center" FontSize="12"
+                                           Foreground="{StaticResource Muted}"/>
+                                <ComboBox x:Name="RatingBox" Width="88" SelectedIndex="4">
+                                    <ComboBoxItem>1</ComboBoxItem>
+                                    <ComboBoxItem>2</ComboBoxItem>
+                                    <ComboBoxItem>3</ComboBoxItem>
+                                    <ComboBoxItem>4</ComboBoxItem>
+                                    <ComboBoxItem>5</ComboBoxItem>
+                                </ComboBox>
+                                <Button Content="Сохранить" Classes="primary" Click="OnSaveRating"/>
                             </StackPanel>
-                            <TextBlock Grid.Column="1" Text="{Binding ScoreText}" Foreground="SteelBlue"
-                                       VerticalAlignment="Center" Margin="10,0,0,0"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </DockPanel>
+                        </StackPanel>
+                    </Grid>
 
-        <!-- Нижняя панель: действия и оценка -->
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Spacing="8" Margin="0,10,0,0">
-            <WrapPanel ItemWidth="200" ItemHeight="34">
-                <Button Content="Топ-10 популярных" Margin="0,0,8,8" Click="OnPopular"/>
-                <Button Content="Похожие (SVD)" Margin="0,0,8,8" Click="OnSimilarSvd"/>
-                <Button Content="Похожие (контент)" Margin="0,0,8,8" Click="OnSimilarContent"/>
-                <Button Content="Рекомендации по моим оценкам" Margin="0,0,8,8" Click="OnMyRecs"/>
-                <Button Content="Мои оценки" Margin="0,0,8,8" Click="OnMyRatings"/>
-                <Button Content="Справка" Margin="0,0,8,8" Click="OnHelp"/>
-            </WrapPanel>
-            <StackPanel Orientation="Horizontal" Spacing="8">
-                <TextBlock Text="Оценить выбранный фильм:" VerticalAlignment="Center"/>
-                <ComboBox x:Name="RatingBox" Width="90" SelectedIndex="4">
-                    <ComboBoxItem>1</ComboBoxItem>
-                    <ComboBoxItem>2</ComboBoxItem>
-                    <ComboBoxItem>3</ComboBoxItem>
-                    <ComboBoxItem>4</ComboBoxItem>
-                    <ComboBoxItem>5</ComboBoxItem>
-                </ComboBox>
-                <Button Content="Сохранить оценку" Click="OnSaveRating"/>
-            </StackPanel>
-        </StackPanel>
+                    <ScrollViewer Grid.Row="1" Margin="0,20,0,0" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Описание" FontSize="12" FontWeight="SemiBold" Foreground="#C6CDDB"/>
+                            <TextBlock x:Name="DetailOverview" TextWrapping="Wrap" FontSize="13"
+                                       LineHeight="22" Foreground="#9AA2B4"
+                                       Text="Выберите фильм в списке слева — здесь появится постер и описание."/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="3" Padding="24,10" Background="#11141B"
+                BorderBrush="{StaticResource Stroke}" BorderThickness="0,1,0,0">
+            <Grid ColumnDefinitions="Auto,*">
+                <Ellipse Width="7" Height="7" Fill="{StaticResource Accent}" VerticalAlignment="Center"
+                         Margin="0,0,8,0"/>
+                <TextBlock x:Name="StatusText" Grid.Column="1" Text="Готово" FontSize="11.5"
+                           Foreground="{StaticResource Muted}" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

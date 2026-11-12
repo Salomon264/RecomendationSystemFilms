@@ -4,13 +4,14 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 import joblib
+import pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 BASE = Path(__file__).parent
 DB = BASE / "ratings.db"
 MODEL = BASE / "recommender.pkl"
-if not MODEL.exists():  # модель лежит в files/, если рядом копии нет
+if not MODEL.exists():  
     MODEL = BASE.parent / "files" / "recommender.pkl"
 model = None
 
@@ -66,7 +67,25 @@ def movies(query: str = "", limit: int = 20):
     if query:
         d = d[d.title.str.contains(query, case=False, na=False)]
     d = d.sort_values("votes", ascending=False).head(limit)
-    return frame(d[["movieId", "title", "genres", "mean", "votes"]])
+    return frame(d[["movieId", "title", "year", "genres", "mean", "votes", "poster_url"]])
+
+
+@app.get("/movies/{movie_id}")
+def movie_details(movie_id: int):
+    if movie_id not in model.pos:
+        raise HTTPException(404, f"фильм {movie_id} не найден")
+    row = model.movies.loc[movie_id]
+    return {
+        "movieId": int(row.movieId),
+        "title": row.title,
+        "year": None if pd.isna(row.year) else int(row.year),
+        "genres": row.genres,
+        "mean": None if pd.isna(row["mean"]) else float(row["mean"]),
+        "votes": int(row.votes),
+        "poster_url": row.poster_url or None,
+        "overview": row.overview or None,
+        "score": float(row.score),
+    }
 
 
 @app.get("/popular")
@@ -128,7 +147,9 @@ def get_ratings(user_id: int):
                         (user_id,)).fetchall()
     conn.close()
     titles = model.movies.title
-    return [{"movie_id": m, "title": titles.get(m, ""), "rating": r} for m, r in rows]
+    posters = model.movies.poster_url
+    return [{"movie_id": m, "title": titles.get(m, ""), "rating": r, "poster_url": posters.get(m, "")}
+            for m, r in rows]
 
 
 @app.get("/ratings/{user_id}/recommendations")

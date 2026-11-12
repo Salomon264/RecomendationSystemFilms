@@ -25,7 +25,8 @@ dotnet run --project app/FilmApp
 | `GET /similar?title=Toy Story&n=10&by=svd` | похожие: `svd` (коллаборативно) или `content` (жанры+описание) |
 | `GET /recommend?movie_ids=1,260&ratings=5,4&n=10` | рекомендации по оценкам (гибрид SVD + контент) |
 | `GET /users/{id}/recommendations?n=10` | персональные рекомендации для пользователя из датасета |
-| `GET /movies?query=star&limit=20` | поиск фильмов |
+| `GET /movies?query=star&limit=20` | поиск фильмов (с годом и постером) |
+| `GET /movies/{id}` | карточка фильма: описание, постер, оценки, балл модели |
 | `POST /ratings` `{user_id, movie_id, rating}` | сохранить оценку в SQLite (`api/ratings.db`) |
 | `GET /ratings/{user_id}` | оценки пользователя из БД |
 | `GET /ratings/{user_id}/recommendations?n=10` | рекомендации по сохранённым в БД оценкам |
@@ -33,4 +34,14 @@ dotnet run --project app/FilmApp
 
 ## Приложение
 
-Avalonia (`app/FilmApp`): поиск фильма слева, список рекомендаций справа, кнопки — топ-10, похожие (SVD/контент), рекомендации по сохранённым оценкам, мои оценки, справка. Оценка выбранного фильма сохраняется в SQLite через API.
+Avalonia (`app/FilmApp`): тёмная тема, список результатов слева с постерами, справа — карточка фильма с описанием, жанрами и метриками. Кнопки — топ, похожие (SVD/контент), рекомендации по сохранённым оценкам, мои оценки, справка. Оценка выбранного фильма сохраняется в SQLite через API.
+
+Постеры грузятся с TMDB; если домен недоступен, тот же кадр запрашивается через прокси `wsrv.nl`.
+
+## Ноутбук
+
+`files/film-recommendation-system.ipynb` — анализ данных (пропуски, годы, жанры, активность), обучение, проверка качества и сохранение модели. Данные лежат в `files/` (`movies.csv`, `ratings (1).csv`, `photo.csv`). Для графиков нужен matplotlib:
+
+```bash
+.venv/bin/pip install matplotlib
+```
